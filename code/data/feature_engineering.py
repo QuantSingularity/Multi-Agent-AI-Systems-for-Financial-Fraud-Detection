@@ -51,8 +51,9 @@ class FeatureEngineer:
         for col, mapping in self.categorical_mappings.items():
             df[f"{col}_encoded"] = df[col].map(mapping).fillna(-1).astype(int)
 
-        # Location risk (international = higher risk)
-        df["is_international"] = (~df["location"].str.startswith("US")).astype(int)
+        df["is_international"] = (
+            ~df["location"].str.startswith("US", na=False)
+        ).astype(int)
 
         # Velocity feature (already computed in generator)
         if "tx_count_1h" not in df.columns:

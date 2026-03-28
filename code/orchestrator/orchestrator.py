@@ -118,12 +118,17 @@ class FraudDetectionOrchestrator:
             "fraud_score": evidence["fraud_score"],
             "risk_level": evidence["risk_level"],
             "is_flagged": evidence["fraud_score"] > 0.5,
-            "detector_scores": detector_scores,
-            "evidence": evidence,
+            "score_isolation_forest": detector_scores.get("isolation_forest", 0.0),
+            "score_xgboost": detector_scores.get("xgboost", 0.0),
+            "score_ensemble": detector_scores.get("ensemble", 0.0),
             "narrative": narrative,
             "review_required": review_gate["review_required"],
             "detection_time_ms": detection_time * 1000,
             "processed_at": datetime.now().isoformat(),
+            # Keep the full nested dicts available for callers that need them,
+            # but they are not relied upon by evaluate().
+            "_evidence": evidence,
+            "_detector_scores": detector_scores,
         }
 
         return result
@@ -138,16 +143,16 @@ class FraudDetectionOrchestrator:
         print(f"Processing {len(transactions_df)} transactions...")
 
         results = []
-        for idx, row in transactions_df.iterrows():
+        for row_num, (idx, row) in enumerate(transactions_df.iterrows(), start=1):
             tx_dict = row.to_dict()
             result = self.detect_single(tx_dict)
             results.append(result)
 
-            if (idx + 1) % 1000 == 0:
-                print(f"  Processed {idx + 1}/{len(transactions_df)}")
+            if row_num % 1000 == 0:
+                print(f"  Processed {row_num}/{len(transactions_df)}")
 
         results_df = pd.DataFrame(results)
-        print(f"Batch processing complete.\n")
+        print("Batch processing complete.\n")
 
         return results_df
 
@@ -161,7 +166,7 @@ class FraudDetectionOrchestrator:
             Metrics dictionary
         """
         y_true = test_df["is_fraud"].values
-        y_pred = results_df["is_flagged"].values
+        y_pred = results_df["is_flagged"].values.astype(int)
         y_scores = results_df["fraud_score"].values
 
         # Import metrics

@@ -107,7 +107,9 @@ class TransactionGenerator:
 
         # Time-of-day pattern (most transactions during business hours)
         hour = timestamp.hour
-        time_weight = 1.0 if 9 <= hour <= 21 else 0.3
+        time_weight = (
+            1.0 if 9 <= hour <= 21 else 0.3
+        )  # noqa: F841 (kept for future use)
 
         return {
             "transaction_id": f"TX{self.rng.randint(0, 1e9):09d}",
@@ -228,23 +230,21 @@ class TransactionGenerator:
 
         # Add velocity features (transactions in past hour for each user)
         df["timestamp_dt"] = pd.to_datetime(df["timestamp"])
-        df = df.sort_values("timestamp_dt")
+        df = df.sort_values("timestamp_dt").reset_index(drop=True)
 
-        # Calculate rolling transaction count per user
         df["tx_count_1h"] = 0
         for user_id in df["user_id"].unique():
             user_mask = df["user_id"] == user_id
-            user_df = df[user_mask].copy()
+            user_df = df.loc[user_mask, ["timestamp_dt"]].copy()
 
-            # Count transactions in past 1 hour
             counts = []
             for idx, row in user_df.iterrows():
                 time_window = row["timestamp_dt"] - timedelta(hours=1)
-                count = len(
-                    user_df[user_df["timestamp_dt"] < row["timestamp_dt"]][
-                        user_df["timestamp_dt"] >= time_window
-                    ]
-                )
+                # Single combined mask — no chained indexing, no index mismatch
+                count = user_df.loc[
+                    (user_df["timestamp_dt"] < row["timestamp_dt"])
+                    & (user_df["timestamp_dt"] >= time_window)
+                ].shape[0]
                 counts.append(count)
 
             df.loc[user_mask, "tx_count_1h"] = counts

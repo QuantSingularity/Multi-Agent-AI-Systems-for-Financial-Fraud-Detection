@@ -179,7 +179,7 @@ def evaluate_detector(
 
     try:
         auc_roc = roc_auc_score(y_test, y_proba)
-    except:
+    except Exception:
         auc_roc = 0.0
 
     # Confusion matrix

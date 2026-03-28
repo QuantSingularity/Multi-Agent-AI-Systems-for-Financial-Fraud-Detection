@@ -22,7 +22,7 @@ class PrivacyGuard:
             "card_number": re.compile(r"\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b"),
             "ssn": re.compile(r"\b\d{3}-\d{2}-\d{4}\b"),
             "email": re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"),
-            "phone": re.compile(r"\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b"),
+            "phone": re.compile(r"\b\d{3}[-.\\s]?\d{3}[-.\\s]?\d{4}\b"),
             "account_number": re.compile(r"\b\d{10,12}\b"),
         }
 
@@ -207,7 +207,11 @@ class PrivacyGuard:
         return {
             "total_redactions": len(self.redaction_log),
             "redacted_transactions": len(
-                set(r["transaction_id"] for r in self.redaction_log)
+                set(
+                    r["transaction_id"]
+                    for r in self.redaction_log
+                    if r["transaction_id"] is not None
+                )
             ),
             "log": self.redaction_log[-100:],  # Last 100 entries
         }

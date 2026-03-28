@@ -67,9 +67,21 @@ class EvidenceAggregator:
         # Weighted ensemble of detector scores
         weights = {"isolation_forest": 0.2, "xgboost": 0.5, "ensemble": 0.3}
 
-        weighted_score = sum(
-            detector_scores.get(name, 0) * weight for name, weight in weights.items()
+        total_weight = sum(
+            weight for name, weight in weights.items() if name in detector_scores
         )
+
+        if total_weight > 0:
+            weighted_score = (
+                sum(
+                    detector_scores.get(name, 0) * weight
+                    for name, weight in weights.items()
+                    if name in detector_scores
+                )
+                / total_weight
+            )
+        else:
+            weighted_score = 0.0
 
         # Identify suspicious features
         suspicious_features = self._identify_suspicious_features(features, transaction)
@@ -156,12 +168,23 @@ class NarrativeGenerator:
 
         return narrative
 
+    def _format_amount(self, amount) -> str:
+
+        if amount is None:
+            return "N/A"
+        try:
+            return f"${float(amount):.2f}"
+        except (TypeError, ValueError):
+            return str(amount)
+
     def _template_based_narrative(self, evidence: Dict, transaction: Dict) -> str:
         """Generate narrative using templates."""
         risk_level = evidence["risk_level"]
         fraud_score = evidence["fraud_score"]
         suspicious_features = evidence["suspicious_features"]
         features = evidence["feature_values"]
+
+        amount_str = self._format_amount(features.get("amount"))
 
         # Header
         header = f"FRAUD ALERT [{risk_level} RISK]\n"
@@ -171,24 +194,26 @@ class NarrativeGenerator:
 
         # Summary
         summary = "SUSPICIOUS ACTIVITY DETECTED\n"
-        summary += f"Transaction of ${features['amount']:.2f} at {features['merchant_category']} "
-        summary += f"from location {features['location']}.\n\n"
+        summary += (
+            f"Transaction of {amount_str} at {features.get('merchant_category', 'N/A')} "
+            f"from location {features.get('location', 'N/A')}.\n\n"
+        )
 
         # Evidence
         evidence_text = "KEY INDICATORS:\n"
         for feat in suspicious_features:
             if feat == "high_amount":
-                evidence_text += f"  • Transaction amount (${features['amount']:.2f}) unusually high\n"
+                evidence_text += (
+                    f"  • Transaction amount ({amount_str}) unusually high\n"
+                )
             elif feat == "unusual_time":
-                evidence_text += (
-                    f"  • Transaction at unusual hour ({features['hour']}:00)\n"
-                )
+                hour = features.get("hour")
+                hour_str = f"{hour}:00" if hour is not None else "N/A"
+                evidence_text += f"  • Transaction at unusual hour ({hour_str})\n"
             elif feat == "international_transaction":
-                evidence_text += (
-                    f"  • International transaction from {features['location']}\n"
-                )
+                evidence_text += f"  • International transaction from {features.get('location', 'N/A')}\n"
             elif feat == "high_velocity":
-                evidence_text += f"  • High transaction velocity ({features['tx_count_1h']} in past hour)\n"
+                evidence_text += f"  • High transaction velocity ({features.get('tx_count_1h', 'N/A')} in past hour)\n"
 
         # Recommendation
         if risk_level == "HIGH":

@@ -96,7 +96,32 @@ class SystemConfig:
         """Load configuration from YAML file."""
         with open(path, "r") as f:
             config_dict = yaml.safe_load(f)
-        return cls(**config_dict)
+
+        config = cls()
+
+        if "model" in config_dict and isinstance(config_dict["model"], dict):
+            config.model = ModelConfig(**config_dict["model"])
+        if "llm" in config_dict and isinstance(config_dict["llm"], dict):
+            config.llm = LLMConfig(**config_dict["llm"])
+        if "privacy" in config_dict and isinstance(config_dict["privacy"], dict):
+            config.privacy = PrivacyConfig(**config_dict["privacy"])
+        if "orchestration" in config_dict and isinstance(
+            config_dict["orchestration"], dict
+        ):
+            config.orchestration = OrchestrationConfig(**config_dict["orchestration"])
+        if "safeguards" in config_dict and isinstance(config_dict["safeguards"], dict):
+            config.safeguards = SafeguardsConfig(**config_dict["safeguards"])
+
+        # Scalar overrides
+        for key in ("train_ratio", "val_ratio", "test_ratio", "cv_folds"):
+            if key in config_dict:
+                setattr(config, key, config_dict[key])
+
+        for key in ("data_dir", "results_dir", "figures_dir"):
+            if key in config_dict:
+                setattr(config, key, Path(config_dict[key]))
+
+        return config
 
     @classmethod
     def from_env(cls) -> "SystemConfig":
@@ -108,7 +133,9 @@ class SystemConfig:
             "ANTHROPIC_API_KEY"
         )
         if config.llm.api_key:
-            config.llm.provider = "openai" if "OPENAI" in os.environ else "anthropic"
+            config.llm.provider = (
+                "openai" if "OPENAI_API_KEY" in os.environ else "anthropic"
+            )
 
         # Override with env vars if present
         if os.getenv("RANDOM_SEED"):

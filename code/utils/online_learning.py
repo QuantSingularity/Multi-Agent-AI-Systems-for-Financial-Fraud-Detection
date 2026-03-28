@@ -98,12 +98,12 @@ class OnlineLearningManager:
             # Check for concept drift
             if self._detect_drift():
                 print("⚠️  Concept drift detected! Triggering retraining...")
-                self.trigger_retrain()
+                self.trigger_retrain(reason="drift")
 
         # Check if scheduled retrain is due
         if self._is_retrain_due():
             print("📅 Scheduled retrain is due...")
-            self.trigger_retrain()
+            self.trigger_retrain(reason="scheduled")
 
         return y_pred
 
@@ -161,8 +161,10 @@ class OnlineLearningManager:
 
         return days_since_retrain >= self.retrain_frequency_days and has_enough_samples
 
-    def trigger_retrain(self):
-        """Trigger model retraining with buffered data."""
+    def trigger_retrain(self, reason: str = "scheduled"):
+        """
+        Trigger model retraining with buffered data.
+        """
         if len(self.buffer_X) < self.min_samples_retrain:
             print(
                 f"  Insufficient samples for retraining ({len(self.buffer_X)} < {self.min_samples_retrain})"
@@ -174,6 +176,7 @@ class OnlineLearningManager:
         print(f"{'='*60}")
         print(f"  Buffer Size: {len(self.buffer_X)}")
         print(f"  Days Since Last: {(datetime.now() - self.last_retrain_date).days}")
+        print(f"  Reason: {reason}")
 
         # Convert buffer to arrays
         X_new = np.array(list(self.buffer_X))
@@ -183,9 +186,9 @@ class OnlineLearningManager:
         print(f"  Training with {len(X_new)} samples...")
         self.model.fit(X_new, y_new)
 
-        # Update metadata
+        # Update metadata — record reason BEFORE resetting drift flag
         self.last_retrain_date = datetime.now()
-        self.drift_detected = False
+        self.drift_detected = False  # safe to reset now
 
         # Increment version
         version_parts = self.model_version.split(".")
@@ -197,7 +200,7 @@ class OnlineLearningManager:
                 "version": self.model_version,
                 "date": self.last_retrain_date.isoformat(),
                 "samples": len(X_new),
-                "reason": "drift" if self.drift_detected else "scheduled",
+                "reason": reason,
             }
         )
 
@@ -379,7 +382,7 @@ class ABTestingFramework:
 
             try:
                 auc = roc_auc_score(y_true, y_proba)
-            except:
+            except Exception:
                 auc = 0.0
 
             results[model_name] = {
@@ -403,7 +406,7 @@ class ABTestingFramework:
 
         # Simple z-test for proportions
         # (In production, use bootstrap or permutation test)
-        improvement = ((f1_b - f1_a) / f1_a) * 100
+        improvement = ((f1_b - f1_a) / f1_a) * 100 if f1_a > 0 else 0.0
 
         print(f"\n{'='*60}")
         print(f"COMPARISON:")
@@ -581,7 +584,7 @@ Track these metrics:
 ### Decision Criteria
 
 Promote Model B if:
-1. F1 score improved by ≥2%
+1. F1 score improved by >=2%
 2. No significant latency increase
 3. No customer experience degradation
 4. Statistical significance (p < 0.05)
@@ -671,10 +674,10 @@ version_format = "MAJOR.MINOR.PATCH"
 # PATCH: Hyperparameter tuning
 
 # Example progression:
-# 1.0.0 → Initial production model
-# 1.1.0 → Weekly retrain
-# 1.2.0 → Drift-triggered retrain
-# 2.0.0 → New model architecture
+# 1.0.0 -> Initial production model
+# 1.1.0 -> Weekly retrain
+# 1.2.0 -> Drift-triggered retrain
+# 2.0.0 -> New model architecture
 ```
 
 ## Best Practices
