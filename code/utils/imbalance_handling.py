@@ -239,7 +239,7 @@ class ImbalanceComparison:
             results.append(result)
             self.results[tech_name] = result
 
-            print(f"Results:")
+            print("Results:")
             print(f"  Precision: {precision:.3f}")
             print(f"  Recall: {recall:.3f}")
             print(f"  F1 Score: {f1:.3f}")

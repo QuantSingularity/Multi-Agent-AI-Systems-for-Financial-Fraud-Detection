@@ -154,7 +154,7 @@ def run_full_experiment(config, dirs, skip_data_gen=False):
     val_df = df[train_size : train_size + val_size]
     test_df = df[train_size + val_size :]
 
-    print(f"\nData splits:")
+    print("\nData splits:")
     print(f"  Train: {len(train_df)} ({len(train_df)/len(df):.1%})")
     print(f"  Val: {len(val_df)} ({len(val_df)/len(df):.1%})")
     print(f"  Test: {len(test_df)} ({len(test_df)/len(df):.1%})")
@@ -193,7 +193,7 @@ def run_full_experiment(config, dirs, skip_data_gen=False):
     results_df = orchestrator.detect_batch(test_df)
     system_metrics = orchestrator.evaluate(test_df, results_df)
 
-    print(f"Multi-Agent System Performance:")
+    print("Multi-Agent System Performance:")
     print(f"  Precision: {system_metrics['precision']:.3f}")
     print(f"  Recall: {system_metrics['recall']:.3f}")
     print(f"  F1 Score: {system_metrics['f1_score']:.3f}")
@@ -323,7 +323,7 @@ def run_advanced_experiment(config, dirs, skip_data_gen=False):
 
     # Baseline costs (assume poor performance without system)
     y_pred_baseline = np.zeros_like(y_test)  # Predict all normal
-    y_proba_baseline = np.random.random(len(y_test)) * 0.3  # Low confidence
+    np.random.random(len(y_test)) * 0.3  # Low confidence
 
     baseline_costs = cost_analyzer.calculate_costs(y_test, y_pred_baseline)
 
@@ -356,7 +356,7 @@ def run_advanced_experiment(config, dirs, skip_data_gen=False):
         json.dump(roi_metrics, f, indent=2)
 
     # Generate business report
-    business_report = cost_analyzer.generate_business_report(
+    cost_analyzer.generate_business_report(
         baseline_costs,
         optimal_costs,
         roi_metrics,
@@ -385,7 +385,7 @@ def run_advanced_experiment(config, dirs, skip_data_gen=False):
     print(f"\nResults saved to: {dirs['base']}")
     print(f"Figures saved to: {dirs['figures']}")
     print(f"Reports saved to: {dirs['reports']}")
-    print(f"\nKey Findings:")
+    print("\nKey Findings:")
     print(f"  • Optimal Threshold: {optimal_threshold:.3f}")
     print(f"  • Annual Savings: ${roi_metrics['annual_fraud_savings']:,.0f}")
     print(f"  • First Year ROI: {roi_metrics['first_year_roi_percent']:.1f}%")

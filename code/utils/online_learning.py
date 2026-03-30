@@ -62,7 +62,7 @@ class OnlineLearningManager:
         self.model_version = "1.0.0"
         self.version_history = []
 
-        print(f"Online Learning Manager Initialized:")
+        print("Online Learning Manager Initialized:")
         print(f"  Window Size: {window_size}")
         print(f"  Drift Threshold: {drift_threshold}")
         print(f"  Retrain Frequency: {retrain_frequency_days} days")
@@ -172,7 +172,7 @@ class OnlineLearningManager:
             return
 
         print(f"\n{'='*60}")
-        print(f"RETRAINING MODEL")
+        print("RETRAINING MODEL")
         print(f"{'='*60}")
         print(f"  Buffer Size: {len(self.buffer_X)}")
         print(f"  Days Since Last: {(datetime.now() - self.last_retrain_date).days}")
@@ -204,7 +204,7 @@ class OnlineLearningManager:
             }
         )
 
-        print(f"  ✓ Model retrained successfully")
+        print("  ✓ Model retrained successfully")
         print(f"  New version: {self.model_version}")
         print(f"{'='*60}\n")
 
@@ -294,7 +294,7 @@ class ABTestingFramework:
         self.results_a = {"y_true": [], "y_pred": [], "y_proba": []}
         self.results_b = {"y_true": [], "y_pred": [], "y_proba": []}
 
-        print(f"A/B Testing Framework Initialized:")
+        print("A/B Testing Framework Initialized:")
         print(f"  Traffic Split: {traffic_split*100:.0f}% to Model B")
         print(f"  Min Samples: {min_samples}")
 
@@ -362,7 +362,7 @@ class ABTestingFramework:
             return {"status": "Insufficient samples for Model B"}
 
         print(f"\n{'='*60}")
-        print(f"A/B TEST RESULTS")
+        print("A/B TEST RESULTS")
         print(f"{'='*60}")
 
         # Calculate metrics for both models
@@ -409,7 +409,7 @@ class ABTestingFramework:
         improvement = ((f1_b - f1_a) / f1_a) * 100 if f1_a > 0 else 0.0
 
         print(f"\n{'='*60}")
-        print(f"COMPARISON:")
+        print("COMPARISON:")
         print(f"  F1 Improvement: {improvement:+.2f}%")
 
         # Decision

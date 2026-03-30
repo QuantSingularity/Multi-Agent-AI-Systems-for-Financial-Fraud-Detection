@@ -106,10 +106,6 @@ class TransactionGenerator:
         location = self.rng.choice(user.typical_locations)
 
         # Time-of-day pattern (most transactions during business hours)
-        hour = timestamp.hour
-        time_weight = (
-            1.0 if 9 <= hour <= 21 else 0.3
-        )  # noqa: F841 (kept for future use)
 
         return {
             "transaction_id": f"TX{self.rng.randint(0, 1e9):09d}",
@@ -299,7 +295,7 @@ def main():
     print(f"  Train: {len(train_df)} transactions ({train_df['is_fraud'].sum()} fraud)")
     print(f"  Val:   {len(val_df)} transactions ({val_df['is_fraud'].sum()} fraud)")
     print(f"  Test:  {len(test_df)} transactions ({test_df['is_fraud'].sum()} fraud)")
-    print(f"\nStatistics saved to data_statistics.json")
+    print("\nStatistics saved to data_statistics.json")
 
 
 if __name__ == "__main__":

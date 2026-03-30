@@ -326,7 +326,7 @@ def figure9_class_imbalance_analysis(figures_dir):
     x_pos = np.arange(len(techniques_pr))
     width = 0.35
 
-    bars1 = ax.bar(
+    ax.bar(
         x_pos - width / 2,
         precision,
         width,
@@ -336,7 +336,7 @@ def figure9_class_imbalance_analysis(figures_dir):
         linewidth=1,
         alpha=0.8,
     )
-    bars2 = ax.bar(
+    ax.bar(
         x_pos + width / 2,
         recall,
         width,
@@ -440,7 +440,7 @@ def figure10_cost_benefit_analysis(figures_dir):
     ax.plot(
         thresholds,
         fp_rate * fp_cost * 100,
-        label=f"FP Cost ($50/case)",
+        label="FP Cost ($50/case)",
         color="steelblue",
         linewidth=2.5,
         linestyle="--",
@@ -448,7 +448,7 @@ def figure10_cost_benefit_analysis(figures_dir):
     ax.plot(
         thresholds,
         fn_rate * fn_cost * 100,
-        label=f"FN Cost ($500/case)",
+        label="FN Cost ($500/case)",
         color="coral",
         linewidth=2.5,
         linestyle="--",
@@ -528,7 +528,7 @@ def figure10_cost_benefit_analysis(figures_dir):
     x_pos = np.arange(len(scenarios))
     width = 0.35
 
-    bars1 = ax.bar(
+    ax.bar(
         x_pos - width / 2,
         annual_fraud_loss,
         width,
@@ -538,7 +538,7 @@ def figure10_cost_benefit_analysis(figures_dir):
         linewidth=1.5,
         alpha=0.8,
     )
-    bars2 = ax.bar(
+    ax.bar(
         x_pos + width / 2,
         investigation_cost,
         width,
@@ -585,7 +585,7 @@ def figure10_cost_benefit_analysis(figures_dir):
     costs = [-300, -100, 3800, 1200, 4600]  # in $1000s
     colors_roi = ["#ff6666", "#ff6666", "#66ff66", "#66ff66", "#6666ff"]
 
-    bars = ax.barh(
+    ax.barh(
         categories, costs, color=colors_roi, edgecolor="black", linewidth=1.5, alpha=0.8
     )
     ax.axvline(x=0, color="black", linewidth=2)
@@ -663,7 +663,7 @@ def figure11_fraud_detection_pipeline(figures_dir):
         (6.5, 7.5, 1.8, 0.8, "Ensemble\nAggregation", "#c8e6c9", "Weighted avg"),
         (1.5, 5.5, 2.5, 0.8, "Evidence\nAggregation", "#e1bee7", "LLM agent"),
         (5.5, 5.5, 2.5, 0.8, "Narrative\nGeneration", "#e1bee7", "Explainability"),
-        (1, 3.5, 2, 0.8, "Threshold\nDecision", "#ffccbc", f"Score > 0.5"),
+        (1, 3.5, 2, 0.8, "Threshold\nDecision", "#ffccbc", "Score > 0.5"),
         (4.5, 3.5, 2, 0.8, "Rate Limiting\nCheck", "#ffccbc", "Policy gates"),
         (7.5, 3.5, 1.5, 0.8, "Audit Log", "#b0bec5", "Compliance"),
         (1.5, 1.5, 2, 0.8, "Investigator\nQueue", "#bbdefb", "High priority"),
@@ -698,7 +698,7 @@ def figure11_fraud_detection_pipeline(figures_dir):
 
     # Arrows showing flow
     arrow_props = dict(arrowstyle="->", lw=2, color="black")
-    arrow_props_thick = dict(arrowstyle="->", lw=3, color="darkred")
+    dict(arrowstyle="->", lw=3, color="darkred")
 
     # Main flow arrows
     arrows = [

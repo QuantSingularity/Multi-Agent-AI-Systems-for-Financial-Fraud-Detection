@@ -137,7 +137,7 @@ def run_full_pipeline(config, train_df, test_df):
     # Evaluate
     metrics = orchestrator.evaluate(test_df, results_df)
 
-    print(f"\nMulti-Agent System Results:")
+    print("\nMulti-Agent System Results:")
     print(f"  Precision: {metrics['precision']:.3f}")
     print(f"  Recall: {metrics['recall']:.3f}")
     print(f"  F1 Score: {metrics['f1_score']:.3f}")

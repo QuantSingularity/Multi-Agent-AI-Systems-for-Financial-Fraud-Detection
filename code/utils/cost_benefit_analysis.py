@@ -46,7 +46,7 @@ class CostBenefitAnalyzer:
         # Cost ratio
         self.cost_ratio = fn_cost / fp_cost
 
-        print(f"Cost-Benefit Analyzer Initialized:")
+        print("Cost-Benefit Analyzer Initialized:")
         print(f"  FP Cost: ${fp_cost:.2f}")
         print(f"  FN Cost: ${fn_cost:.2f}")
         print(f"  Cost Ratio (FN/FP): {self.cost_ratio:.1f}x")
@@ -142,7 +142,7 @@ class CostBenefitAnalyzer:
             "optimal_cost": float(optimal_costs["total_cost"]),
         }
 
-        print(f"\nOptimal Threshold Analysis:")
+        print("\nOptimal Threshold Analysis:")
         print(f"  Optimal Threshold: {optimal_threshold:.3f}")
         print(f"  Total Cost: ${optimal_costs['total_cost']:,.2f}")
         print(f"  FP Count: {optimal_costs['false_positives']}")
@@ -271,15 +271,15 @@ class CostBenefitAnalyzer:
         }
 
         print(f"\n{'='*60}")
-        print(f"ROI ANALYSIS")
+        print("ROI ANALYSIS")
         print(f"{'='*60}")
         print(f"Annual Fraud Savings: ${annual_savings:,.2f}")
         print(f"Investigation Savings: ${investigation_cost_saved:,.2f}")
         print(f"Total Annual Benefit: ${total_annual_benefit:,.2f}")
-        print(f"\nFirst Year:")
+        print("\nFirst Year:")
         print(f"  Net Benefit: ${first_year_net:,.2f}")
         print(f"  ROI: {first_year_roi:.1f}%")
-        print(f"\nOngoing (Year 2+):")
+        print("\nOngoing (Year 2+):")
         print(f"  Annual Net: ${ongoing_net:,.2f}")
         print(f"  ROI: {ongoing_roi:.1f}%")
         print(f"\nPayback Period: {payback_months:.1f} months")
@@ -395,7 +395,7 @@ class CostBenefitAnalyzer:
             roi_metrics["total_annual_benefit"] - roi_metrics["annual_maintenance_cost"]
         )
 
-        report.append(f"\nYear 1:")
+        report.append("\nYear 1:")
         report.append(f"  Revenue/Savings: ${roi_metrics['total_annual_benefit']:,.0f}")
         report.append(f"  Implementation: -${roi_metrics['implementation_cost']:,.0f}")
         report.append(f"  Maintenance: -${roi_metrics['annual_maintenance_cost']:,.0f}")
