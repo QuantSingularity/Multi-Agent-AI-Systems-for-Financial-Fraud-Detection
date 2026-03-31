@@ -3,9 +3,9 @@ Privacy Guard agent for PII redaction and data protection.
 Implements deterministic rules and policy enforcement.
 """
 
-import re
 import hashlib
-from typing import Dict, Any, List
+import re
+from typing import Any, Dict, List
 
 
 class PrivacyGuard:

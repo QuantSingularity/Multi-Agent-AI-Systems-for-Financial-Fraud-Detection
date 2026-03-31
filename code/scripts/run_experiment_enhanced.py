@@ -6,35 +6,35 @@ Enhanced experiment runner with advanced features:
 - Production-ready evaluation
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import argparse
-import numpy as np
-import pandas as pd
-from pathlib import Path
 import json
 import time
 from datetime import datetime
+from pathlib import Path
 
+import numpy as np
+import pandas as pd
 from config import get_config
-from data.synthetic_generator import generate_synthetic_fraud_data
 from data.feature_engineering import FeatureEngineer
-from orchestrator.orchestrator import FraudDetectionOrchestrator
-from models.anomaly_detectors import evaluate_detector
+from data.synthetic_generator import generate_synthetic_fraud_data
 from eval.generate_figures import main as generate_basic_figures
+from models.anomaly_detectors import evaluate_detector
+from orchestrator.orchestrator import FraudDetectionOrchestrator
 
 # Import new modules
 try:
+    from eval.advanced_visualizations import generate_all_advanced_figures
+    from utils.cost_benefit_analysis import CostBenefitAnalyzer
     from utils.imbalance_handling import (
         ImbalanceComparison,
         create_imbalance_analysis_documentation,
     )
-    from utils.cost_benefit_analysis import CostBenefitAnalyzer
     from utils.online_learning import create_model_updating_documentation
-    from eval.advanced_visualizations import generate_all_advanced_figures
 
     ADVANCED_FEATURES_AVAILABLE = True
 except ImportError:

@@ -3,15 +3,16 @@ Class imbalance handling and analysis module.
 Implements SMOTE, ADASYN, and cost-sensitive learning with comprehensive evaluation.
 """
 
-import numpy as np
-import pandas as pd
-from imblearn.over_sampling import SMOTE, ADASYN
-from imblearn.under_sampling import RandomUnderSampler
-from imblearn.combine import SMOTETomek
-from sklearn.utils import class_weight
 import json
 from pathlib import Path
 from typing import Dict, Tuple
+
+import numpy as np
+import pandas as pd
+from imblearn.combine import SMOTETomek
+from imblearn.over_sampling import ADASYN, SMOTE
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.utils import class_weight
 
 
 class ImbalanceHandler:
@@ -158,9 +159,9 @@ class ImbalanceComparison:
             DataFrame with comparison results
         """
         from sklearn.metrics import (
+            confusion_matrix,
             precision_recall_fscore_support,
             roc_auc_score,
-            confusion_matrix,
         )
 
         techniques = {

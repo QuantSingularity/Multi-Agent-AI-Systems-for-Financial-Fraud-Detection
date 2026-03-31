@@ -3,9 +3,10 @@ Feature engineering pipeline for fraud detection.
 Extracts temporal, statistical, and behavioral features from transactions.
 """
 
-import pandas as pd
-import numpy as np
 from typing import List
+
+import numpy as np
+import pandas as pd
 
 
 class FeatureEngineer:

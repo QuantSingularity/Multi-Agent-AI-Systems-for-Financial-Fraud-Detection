@@ -6,21 +6,21 @@ import sys
 
 sys.path.append("..")
 
-from typing import Dict, Any
 import time
 from datetime import datetime
-import pandas as pd
-import numpy as np
+from typing import Any, Dict
 
+import numpy as np
+import pandas as pd
+from agents.llm_agents import EvidenceAggregator, NarrativeGenerator
+from agents.privacy_guard import PrivacyGuard
 from config import get_config
 from data.feature_engineering import FeatureEngineer
 from models.anomaly_detectors import (
+    EnsembleDetector,
     IsolationForestDetector,
     XGBoostDetector,
-    EnsembleDetector,
 )
-from agents.privacy_guard import PrivacyGuard
-from agents.llm_agents import EvidenceAggregator, NarrativeGenerator
 
 
 class FraudDetectionOrchestrator:
@@ -171,11 +171,11 @@ class FraudDetectionOrchestrator:
 
         # Import metrics
         from sklearn.metrics import (
+            confusion_matrix,
+            precision_recall_curve,
             precision_recall_fscore_support,
             roc_auc_score,
-            confusion_matrix,
             roc_curve,
-            precision_recall_curve,
         )
 
         # Basic metrics

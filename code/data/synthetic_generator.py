@@ -3,12 +3,13 @@ Deterministic synthetic transaction and fraud data generator.
 Produces realistic financial transaction patterns with configurable fraud scenarios.
 """
 
-import numpy as np
-import pandas as pd
+import json
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Dict, List
-from dataclasses import dataclass
-import json
+
+import numpy as np
+import pandas as pd
 
 
 @dataclass

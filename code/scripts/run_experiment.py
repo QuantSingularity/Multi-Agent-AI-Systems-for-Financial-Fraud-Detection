@@ -2,26 +2,26 @@
 Main experiment runner - trains models, evaluates, and generates results.
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import argparse
-import pandas as pd
 import json
 import time
 
+import pandas as pd
 from config import get_config
-from data.synthetic_generator import TransactionGenerator
 from data.feature_engineering import FeatureEngineer
-from orchestrator.orchestrator import FraudDetectionOrchestrator
+from data.synthetic_generator import TransactionGenerator
 from models.anomaly_detectors import (
+    EnsembleDetector,
     IsolationForestDetector,
     XGBoostDetector,
-    EnsembleDetector,
     evaluate_detector,
 )
+from orchestrator.orchestrator import FraudDetectionOrchestrator
 
 
 def generate_data(config, mode="quick"):

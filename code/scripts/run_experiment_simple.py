@@ -2,23 +2,24 @@
 Simplified experiment runner using only sklearn (no xgboost dependency).
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import pandas as pd
-import numpy as np
 import json
 import time
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 from sklearn.ensemble import IsolationForest, RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
+    confusion_matrix,
     precision_recall_fscore_support,
     roc_auc_score,
-    confusion_matrix,
 )
+from sklearn.preprocessing import StandardScaler
 
 
 # Simple config

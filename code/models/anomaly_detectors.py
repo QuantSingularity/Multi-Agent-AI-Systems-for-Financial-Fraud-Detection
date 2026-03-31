@@ -3,17 +3,18 @@ ML-based anomaly detection models for fraud detection.
 Implements unsupervised and supervised detectors.
 """
 
+from typing import Dict
+
+import joblib
 import numpy as np
+import xgboost as xgb
 from sklearn.ensemble import IsolationForest
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
+    confusion_matrix,
     precision_recall_fscore_support,
     roc_auc_score,
-    confusion_matrix,
 )
-import xgboost as xgb
-from typing import Dict
-import joblib
+from sklearn.preprocessing import StandardScaler
 
 
 class AnomalyDetector:

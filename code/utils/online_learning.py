@@ -3,13 +3,14 @@ Online learning and model updating strategy for fraud detection.
 Handles concept drift, periodic retraining, A/B testing, and adaptive learning.
 """
 
-import numpy as np
-from datetime import datetime
-from typing import Dict, Optional, Tuple
-import joblib
-from pathlib import Path
 import json
 from collections import deque
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, Optional, Tuple
+
+import joblib
+import numpy as np
 
 
 class OnlineLearningManager:
@@ -109,7 +110,7 @@ class OnlineLearningManager:
 
     def _update_performance_metrics(self, y_true: np.ndarray, y_pred: np.ndarray):
         """Update running performance metrics."""
-        from sklearn.metrics import precision_score, recall_score, f1_score
+        from sklearn.metrics import f1_score, precision_score, recall_score
 
         precision = precision_score(y_true, y_pred, zero_division=0)
         recall = recall_score(y_true, y_pred, zero_division=0)
