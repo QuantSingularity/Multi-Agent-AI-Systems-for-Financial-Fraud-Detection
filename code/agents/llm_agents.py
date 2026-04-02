@@ -4,7 +4,7 @@ Uses mock LLM for reproducibility (can be swapped with real API).
 """
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 
@@ -17,7 +17,6 @@ class MockLLM:
 
     def generate(self, prompt: str, **kwargs) -> str:
         """Generate mock response based on prompt content."""
-        # Simple deterministic responses for testing
         if "evidence" in prompt.lower():
             return self._generate_evidence_response()
         elif "narrative" in prompt.lower():
@@ -64,7 +63,6 @@ class EvidenceAggregator:
         Returns:
             Evidence dictionary with consolidated assessment
         """
-        # Weighted ensemble of detector scores
         weights = {"isolation_forest": 0.2, "xgboost": 0.5, "ensemble": 0.3}
 
         total_weight = sum(
@@ -83,16 +81,21 @@ class EvidenceAggregator:
         else:
             weighted_score = 0.0
 
-        # Identify suspicious features
         suspicious_features = self._identify_suspicious_features(features, transaction)
 
-        # Risk level
         if weighted_score > 0.8:
             risk_level = "HIGH"
         elif weighted_score > 0.5:
             risk_level = "MEDIUM"
         else:
             risk_level = "LOW"
+
+        llm_prompt = (
+            f"Analyze evidence for transaction {transaction['transaction_id']}. "
+            f"Detector scores: {detector_scores}. "
+            f"Suspicious features: {suspicious_features}."
+        )
+        self.llm.generate(llm_prompt)
 
         evidence = {
             "transaction_id": transaction["transaction_id"],
@@ -104,7 +107,7 @@ class EvidenceAggregator:
             "suspicious_features": suspicious_features,
             "feature_values": self._extract_key_features(features, transaction),
             "aggregation_method": "weighted_ensemble",
-            "aggregated_at": datetime.now().isoformat(),
+            "aggregated_at": datetime.now(timezone.utc).isoformat(),
         }
 
         return evidence
@@ -115,19 +118,15 @@ class EvidenceAggregator:
         """Identify which features are suspicious."""
         suspicious = []
 
-        # Amount checks
         if features.get("amount", 0) > 500:
             suspicious.append("high_amount")
 
-        # Time checks
         if features.get("is_night", 0) == 1:
             suspicious.append("unusual_time")
 
-        # Location checks
         if features.get("is_international", 0) == 1:
             suspicious.append("international_transaction")
 
-        # Velocity checks
         if features.get("tx_count_1h", 0) > 3:
             suspicious.append("high_velocity")
 
@@ -163,13 +162,20 @@ class NarrativeGenerator:
         Returns:
             Human-readable narrative string
         """
-        # Use template-based generation for determinism
+        llm_prompt = (
+            f"Generate a narrative for transaction {transaction['transaction_id']}. "
+            f"Risk level: {evidence['risk_level']}. "
+            f"Fraud score: {evidence['fraud_score']:.3f}. "
+            f"Suspicious features: {evidence['suspicious_features']}."
+        )
+        self.llm.generate(llm_prompt)
+
         narrative = self._template_based_narrative(evidence, transaction)
 
         return narrative
 
     def _format_amount(self, amount) -> str:
-
+        """Format a numeric amount as a currency string."""
         if amount is None:
             return "N/A"
         try:
@@ -186,20 +192,17 @@ class NarrativeGenerator:
 
         amount_str = self._format_amount(features.get("amount"))
 
-        # Header
         header = f"FRAUD ALERT [{risk_level} RISK]\n"
         header += f"Transaction ID: {transaction['transaction_id']}\n"
         header += f"User: {transaction['user_id']}\n"
         header += f"Fraud Score: {fraud_score:.3f}\n\n"
 
-        # Summary
         summary = "SUSPICIOUS ACTIVITY DETECTED\n"
         summary += (
             f"Transaction of {amount_str} at {features.get('merchant_category', 'N/A')} "
             f"from location {features.get('location', 'N/A')}.\n\n"
         )
 
-        # Evidence
         evidence_text = "KEY INDICATORS:\n"
         for feat in suspicious_features:
             if feat == "high_amount":
@@ -215,7 +218,6 @@ class NarrativeGenerator:
             elif feat == "high_velocity":
                 evidence_text += f"  • High transaction velocity ({features.get('tx_count_1h', 'N/A')} in past hour)\n"
 
-        # Recommendation
         if risk_level == "HIGH":
             recommendation = "\nRECOMMENDATION: Immediate investigator review and potential account freeze.\n"
         elif risk_level == "MEDIUM":
@@ -237,7 +239,7 @@ class NarrativeGenerator:
         """Generate structured case report for investigators."""
         report = {
             "report_id": f"RPT-{transaction['transaction_id']}",
-            "generated_at": datetime.now().isoformat(),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
             "transaction": transaction,
             "evidence": evidence,
             "narrative": narrative,
