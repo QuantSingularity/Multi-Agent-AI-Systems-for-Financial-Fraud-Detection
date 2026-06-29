@@ -10,6 +10,10 @@ from typing import List, Optional
 
 import yaml
 
+# Directory containing this file (the project's ``code`` directory). Used to
+# anchor data/results/figures paths so they resolve regardless of CWD.
+_CODE_DIR = Path(__file__).resolve().parent
+
 
 @dataclass
 class ModelConfig:
@@ -81,10 +85,11 @@ class SystemConfig:
     orchestration: OrchestrationConfig = field(default_factory=OrchestrationConfig)
     safeguards: SafeguardsConfig = field(default_factory=SafeguardsConfig)
 
-    # Data paths
-    data_dir: Path = field(default_factory=lambda: Path("../data"))
-    results_dir: Path = field(default_factory=lambda: Path("../results"))
-    figures_dir: Path = field(default_factory=lambda: Path("../figures"))
+    # Data paths (anchored to the code directory so they resolve regardless of
+    # the current working directory).
+    data_dir: Path = field(default_factory=lambda: _CODE_DIR / "data")
+    results_dir: Path = field(default_factory=lambda: _CODE_DIR / "results")
+    figures_dir: Path = field(default_factory=lambda: _CODE_DIR / "figures")
 
     # Experiment settings
     train_ratio: float = 0.7

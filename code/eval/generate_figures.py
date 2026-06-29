@@ -13,7 +13,6 @@ import pandas as pd
 
 matplotlib.use("Agg")
 import json
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -27,7 +26,9 @@ plt.rcParams["font.size"] = 10
 
 def load_results():
     """Load experimental results."""
-    results_dir = Path("../results/metrics")
+    from config import get_config
+
+    results_dir = get_config().results_dir / "metrics"
 
     with open(results_dir / "baseline_metrics.json", "r") as f:
         metrics = json.load(f)
@@ -330,7 +331,9 @@ def main():
     print("GENERATING PUBLICATION FIGURES")
     print("=" * 60 + "\n")
 
-    figures_dir = Path("../figures")
+    from config import get_config
+
+    figures_dir = get_config().figures_dir
     figures_dir.mkdir(parents=True, exist_ok=True)
 
     # Load results

@@ -1,5 +1,5 @@
 """
-Enhanced experiment runner with advanced features:
+Advanced experiment runner with advanced features:
 - Class imbalance handling comparison
 - Cost-benefit analysis
 - Advanced visualizations
@@ -20,6 +20,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from config import get_config
+
+# Anchor default paths to the code directory so they resolve regardless of CWD.
+_CODE_DIR = Path(__file__).resolve().parent.parent
 from data.feature_engineering import FeatureEngineer
 from data.synthetic_generator import generate_synthetic_fraud_data
 from eval.generate_figures import main as generate_basic_figures
@@ -43,7 +46,7 @@ except ImportError:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Enhanced Fraud Detection Experiments")
+    parser = argparse.ArgumentParser(description="Advanced Fraud Detection Experiments")
     parser.add_argument(
         "--mode",
         choices=["quick", "full", "advanced"],
@@ -58,7 +61,7 @@ def parse_args():
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="../results",
+        default=str(_CODE_DIR / "results"),
         help="Output directory for results",
     )
     return parser.parse_args()
@@ -130,7 +133,7 @@ def run_full_experiment(config, dirs, skip_data_gen=False):
     print("=" * 70 + "\n")
 
     # Data generation
-    data_path = Path("../data/synthetic_fraud_data.csv")
+    data_path = _CODE_DIR / "data" / "synthetic_fraud_data.csv"
 
     if skip_data_gen and data_path.exists():
         print("Loading existing dataset...")
@@ -260,7 +263,7 @@ def run_advanced_experiment(config, dirs, skip_data_gen=False):
     )
 
     # Load data
-    data_path = Path("../data/synthetic_fraud_data.csv")
+    data_path = _CODE_DIR / "data" / "synthetic_fraud_data.csv"
     df = pd.read_csv(data_path)
 
     train_size = int(len(df) * config.train_ratio)
@@ -307,7 +310,7 @@ def run_advanced_experiment(config, dirs, skip_data_gen=False):
         f.write(report)
 
     # Create documentation
-    create_imbalance_analysis_documentation(Path("../docs"))
+    create_imbalance_analysis_documentation(_CODE_DIR / "docs")
 
     # 2. COST-BENEFIT ANALYSIS
     print("\n" + "=" * 70)
@@ -370,7 +373,7 @@ def run_advanced_experiment(config, dirs, skip_data_gen=False):
     print("GENERATING DOCUMENTATION")
     print("=" * 70 + "\n")
 
-    create_model_updating_documentation(Path("../docs"))
+    create_model_updating_documentation(_CODE_DIR / "docs")
 
     # 4. ADVANCED VISUALIZATIONS
     print("\n" + "=" * 70)
@@ -405,7 +408,7 @@ def main():
 
     print("=" * 70)
     print("MULTI-AGENT FRAUD DETECTION SYSTEM")
-    print("Enhanced Experiment Runner")
+    print("Advanced Experiment Runner")
     print("=" * 70)
     print(f"\nMode: {args.mode.upper()}")
     print(f"Timestamp: {datetime.now().isoformat()}")

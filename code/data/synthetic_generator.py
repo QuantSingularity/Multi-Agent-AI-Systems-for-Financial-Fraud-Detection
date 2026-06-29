@@ -30,7 +30,6 @@ class TransactionGenerator:
     def __init__(self, n_users: int = 1000, random_state: int = 42):
         self.n_users = n_users
         self.rng = np.random.RandomState(random_state)
-        self.users = self._generate_user_profiles()
 
         # Merchant categories
         self.merchant_categories = [
@@ -59,6 +58,9 @@ class TransactionGenerator:
             "CN-BEJ",
             "ONLINE",
         ]
+
+        # Generate user profiles last (depends on categories and locations above).
+        self.users = self._generate_user_profiles()
 
     def _generate_user_profiles(self) -> List[UserProfile]:
         """Generate diverse user spending profiles."""
@@ -271,6 +273,31 @@ class TransactionGenerator:
             .to_dict(),
         }
         return stats
+
+
+def generate_synthetic_fraud_data(
+    n_samples: int = 10000,
+    fraud_ratio: float = 0.02,
+    random_state: int = 42,
+    n_users: int = 1000,
+) -> pd.DataFrame:
+    """Convenience wrapper returning a single synthetic transaction dataset.
+
+    Builds a :class:`TransactionGenerator` and returns one combined DataFrame of
+    ``n_samples`` transactions with approximately ``fraud_ratio`` fraudulent rows.
+    Used by the advanced experiment runner.
+
+    Args:
+        n_samples: Total number of transactions to generate.
+        fraud_ratio: Approximate fraction of fraudulent transactions.
+        random_state: Seed for reproducibility.
+        n_users: Number of synthetic user profiles to simulate.
+
+    Returns:
+        A pandas DataFrame with transaction features and an ``is_fraud`` label.
+    """
+    generator = TransactionGenerator(n_users=n_users, random_state=random_state)
+    return generator.generate_dataset(n_transactions=n_samples, fraud_ratio=fraud_ratio)
 
 
 def main():

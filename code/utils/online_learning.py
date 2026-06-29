@@ -444,6 +444,10 @@ class ABTestingFramework:
 def create_model_updating_documentation(output_dir: Path):
     """Create documentation on model updating strategy."""
 
+    # Accept either a str or Path and ensure the directory exists.
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     doc = """
 # Model Updating Strategy - Technical Documentation
 

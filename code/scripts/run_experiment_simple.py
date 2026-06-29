@@ -26,9 +26,11 @@ from sklearn.preprocessing import StandardScaler
 class Config:
     def __init__(self):
         self.random_state = 42
-        self.data_dir = Path("../data")
-        self.results_dir = Path("../results")
-        self.figures_dir = Path("../figures")
+        # Anchor to the code directory so paths resolve regardless of CWD.
+        _code_dir = Path(__file__).resolve().parent.parent
+        self.data_dir = _code_dir / "data"
+        self.results_dir = _code_dir / "results"
+        self.figures_dir = _code_dir / "figures"
 
 
 def generate_synthetic_data(n_transactions=5000, fraud_ratio=0.02, random_state=42):
