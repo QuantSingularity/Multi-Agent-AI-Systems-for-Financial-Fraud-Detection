@@ -1,0 +1,41 @@
+{
+  "n_transactions": 5000,
+  "n_users": 987,
+  "fraud_ratio": 0.02,
+  "amount_mean": 83.6081890737133,
+  "amount_std": 101.80576224438173,
+  "fraud_amount_mean": 212.14105368566524,
+  "normal_amount_mean": 80.98506938775509,
+  "fraud_types": {
+    "account_takeover": 23,
+    "location_anomaly": 23,
+    "amount_anomaly": 16,
+    "velocity": 15,
+    "time_anomaly": 14,
+    "merchant_anomaly": 9
+  },
+  "merchant_distribution": {
+    "other": 0.1068,
+    "healthcare": 0.1048,
+    "restaurant": 0.1048,
+    "gas": 0.1044,
+    "travel": 0.103,
+    "grocery": 0.1016,
+    "retail": 0.0992,
+    "utilities": 0.0936,
+    "online": 0.0912,
+    "entertainment": 0.0906
+  },
+  "location_distribution": {
+    "US-CA": 0.2084,
+    "US-NY": 0.2038,
+    "US-IL": 0.1998,
+    "US-TX": 0.1926,
+    "US-FL": 0.1882,
+    "ONLINE": 0.0024,
+    "CN-BEJ": 0.002,
+    "JP-TYO": 0.002,
+    "UK-LON": 0.0006,
+    "FR-PAR": 0.0002
+  }
+}

@@ -4,6 +4,42 @@ Generates comprehensive figures including ROC curves, PR curves, feature importa
 class imbalance analysis, and cost-benefit visualizations.
 """
 
+# --- matplotlib/seaborn compatibility shim (auto-added) ---
+# Old seaborn (<0.12) calls matplotlib.cm.register_cmap / get_cmap, removed in
+# matplotlib 3.9+. Restore them so seaborn imports and runs on modern matplotlib
+# without requiring a seaborn upgrade. No-op on already-compatible versions.
+try:
+    import matplotlib as _mpl_compat
+    import matplotlib.cm as _mpl_cm_compat
+
+    if not hasattr(_mpl_cm_compat, "register_cmap"):
+
+        def _compat_register_cmap(name=None, cmap=None, **_kw):
+            if cmap is None and not isinstance(name, str):
+                cmap, name = name, getattr(name, "name", None)
+            _mpl_compat.colormaps.register(cmap, name=name, force=True)
+
+        _mpl_cm_compat.register_cmap = _compat_register_cmap
+
+    if not hasattr(_mpl_cm_compat, "get_cmap"):
+
+        def _compat_get_cmap(name=None, lut=None):
+            _c = (
+                _mpl_compat.colormaps[name]
+                if isinstance(name, str)
+                else (
+                    name
+                    if name is not None
+                    else _mpl_compat.colormaps[_mpl_compat.rcParams["image.cmap"]]
+                )
+            )
+            return _c.resampled(lut) if lut else _c
+
+        _mpl_cm_compat.get_cmap = _compat_get_cmap
+except Exception:
+    pass
+# --- end compatibility shim ---
+
 import os
 import sys
 
