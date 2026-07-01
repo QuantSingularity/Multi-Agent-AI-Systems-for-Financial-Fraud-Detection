@@ -2,6 +2,77 @@
 Simplified experiment runner using only sklearn (no xgboost dependency).
 """
 
+import logging as _lg
+
+# --- keep run output readable: suppress benign third-party noise (auto-added) ---
+import os as _os
+import warnings as _w
+
+_os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
+_os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+_os.environ.setdefault("GRPC_VERBOSITY", "ERROR")
+for _m in (
+    r".*does not have valid feature names.*",
+    r".*tight_layout.*",
+    r".*Gym has been unmaintained.*",
+    r".*not wrapped with a ``Monitor``.*",
+):
+    _w.filterwarnings("ignore", message=_m)
+_w.filterwarnings("ignore", category=DeprecationWarning)
+_w.filterwarnings("ignore", category=FutureWarning)
+try:
+    from sklearn.exceptions import ConvergenceWarning as _CW
+
+    _w.filterwarnings("ignore", category=_CW)
+except Exception:
+    pass
+for _n in (
+    "matplotlib",
+    "PIL",
+    "urllib3",
+    "yfinance",
+    "tensorflow",
+    "absl",
+    "gym",
+    "gymnasium",
+    "shap",
+    "numba",
+    "h5py",
+):
+    _lg.getLogger(_n).setLevel(_lg.ERROR)
+
+
+def _silence_tqdm():
+    try:
+        import tqdm.std as _tstd
+
+        _orig = _tstd.tqdm.__init__
+
+        def _init(self, *a, **k):
+            k["disable"] = True
+            _orig(self, *a, **k)
+
+        _tstd.tqdm.__init__ = _init
+        try:
+            from tqdm import auto as _ta
+
+            if _ta.tqdm is not _tstd.tqdm:
+                _o2 = _ta.tqdm.__init__
+
+                def _init2(self, *a, **k):
+                    k["disable"] = True
+                    _o2(self, *a, **k)
+
+                _ta.tqdm.__init__ = _init2
+        except Exception:
+            pass
+    except Exception:
+        pass
+
+
+_silence_tqdm()
+# --- end output cleanup ---
+
 import os
 import sys
 
@@ -223,12 +294,21 @@ def train_and_evaluate(config):
         config.results_dir / "metrics" / "model_comparison.csv", index=False
     )
 
-    print(f"\n Results saved to {config.results_dir}/metrics/")
-    print("\n" + "=" * 60)
-    print("EXPERIMENT COMPLETE")
-    print("=" * 60)
-    print("\nModel Comparison:")
-    print(comparison.to_string(index=False))
+    print(f"\nResults saved to {config.results_dir}/metrics/")
+    W = 60
+    print("\n" + "=" * W)
+    print("FRAUD DETECTION - RESULTS".center(W))
+    print("=" * W)
+    print(f"\n{'Model':<20}{'Precision':>10}{'Recall':>9}{'F1':>8}{'AUC':>9}")
+    print("-" * W)
+    _best = comparison.loc[comparison["f1_score"].idxmax(), "model"]
+    for _, r in comparison.iterrows():
+        mark = "  <- best" if r["model"] == _best else ""
+        print(
+            f"{str(r['model']):<20}{r['precision']:>10.3f}{r['recall']:>9.3f}"
+            f"{r['f1_score']:>8.3f}{r['auc_roc']:>9.3f}{mark}"
+        )
+    print("=" * W)
 
     return results, latency_stats, comparison
 

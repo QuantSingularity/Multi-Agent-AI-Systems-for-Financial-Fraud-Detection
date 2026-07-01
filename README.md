@@ -89,6 +89,12 @@ Results and figures are saved to `results/` and `figures/` on the host.
 
 ---
 
+<!-- output-note -->
+
+### Output
+
+Console output stays readable: benign third-party warnings and library progress bars are suppressed, so only meaningful log lines remain. Each run finishes with a clean, aligned summary block reporting a model-comparison table with the best F1 score highlighted.
+
 ## Results
 
 ### Model Comparison
