@@ -187,7 +187,7 @@ class OnlineLearningManager:
         print(f"  Training with {len(X_new)} samples...")
         self.model.fit(X_new, y_new)
 
-        # Update metadata — record reason BEFORE resetting drift flag
+        # Update metadata - record reason BEFORE resetting drift flag
         self.last_retrain_date = datetime.now()
         self.drift_detected = False  # safe to reset now
 

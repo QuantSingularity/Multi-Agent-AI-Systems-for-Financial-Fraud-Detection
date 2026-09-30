@@ -120,7 +120,7 @@ Console output stays readable: benign third-party warnings and library progress 
 
 | Safeguard            | Description                                                                           |
 | :------------------- | :------------------------------------------------------------------------------------ |
-| PII Redaction        | Policy-driven redaction before any LLM or investigator exposure — GDPR/CCPA aligned   |
+| PII Redaction        | Policy-driven redaction before any LLM or investigator exposure - GDPR/CCPA aligned   |
 | Audit Logs           | Timestamped trace of all agent decisions and scores for regulatory review             |
 | Narrative Generation | Evidence-backed rationale per flagged transaction addressing the Right to Explanation |
 

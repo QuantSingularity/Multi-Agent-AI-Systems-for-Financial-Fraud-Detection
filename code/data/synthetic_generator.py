@@ -239,7 +239,7 @@ class TransactionGenerator:
             counts = []
             for idx, row in user_df.iterrows():
                 time_window = row["timestamp_dt"] - timedelta(hours=1)
-                # Single combined mask — no chained indexing, no index mismatch
+                # Single combined mask - no chained indexing, no index mismatch
                 count = user_df.loc[
                     (user_df["timestamp_dt"] < row["timestamp_dt"])
                     & (user_df["timestamp_dt"] >= time_window)
